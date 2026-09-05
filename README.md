@@ -50,7 +50,7 @@ Vite forwards `/api` to that server. Copy `.env.example` to `.env.local` and fil
 in the server-only feedback settings; both start scripts load that file when
 present. The API defaults to the Vite origin `http://127.0.0.1:5173` in dev mode.
 If Vite uses another origin, set `PUBLIC_ORIGIN` to match and restart the API.
-Never commit `.env.local` or put the token in a `VITE_`/`NEXT_PUBLIC_` variable.
+Never commit `.env.local` or put the GitHub token in a `VITE_`/`NEXT_PUBLIC_` variable.
 
 ## Deploy on Render
 
@@ -115,6 +115,33 @@ The app does not provide live collaborative sessions. Browser drafts are local
 to that browser and site address; use **Export → All markers** for a complete
 backup before clearing browser data. Older snapshot links remain importable,
 but the duplicate Share button has been removed.
+
+### Page views with Cloudflare Web Analytics
+
+Analytics is optional and disabled until configured. The app stays on Render;
+there is no need to connect GitHub to Cloudflare, move hosting, or change DNS.
+
+1. In [Cloudflare Web Analytics](https://dash.cloudflare.com/?to=/:account/web-analytics),
+   choose **Add a site** and enter `osrs-tile-studio.onrender.com` (or your actual
+   public hostname). Open **Manage site** to get its JavaScript snippet.
+2. Copy only the `token` value from `data-cf-beacon`: the 32-character public
+   site identifier, not a Cloudflare API token or GitHub PAT.
+3. Add `CLOUDFLARE_WEB_ANALYTICS_TOKEN` in the Render service's Environment
+   settings, then save and rebuild/redeploy. It is read at build time, so a
+   restart without a new build does not change it.
+4. Visit the public app and check that site's Web Analytics dashboard after a
+   few minutes. Counts begin after activation; earlier traffic is not recovered.
+
+The production build adds one official Cloudflare beacon. Development mode does
+not load it. SPA navigation measurement is disabled, so editing tiles, panning,
+or switching areas does not create extra page views. No custom events, marker
+data, imported profile contents, or feedback text are sent by the integration.
+Cloudflare collects page-load/performance data; its beacon does not use cookies
+or browser storage. Ad blockers and disabled JavaScript can prevent counting.
+See the official [setup guide](https://developers.cloudflare.com/web-analytics/get-started/),
+[SPA settings](https://developers.cloudflare.com/web-analytics/get-started/web-analytics-spa/),
+and [data collection documentation](https://developers.cloudflare.com/speed/observatory/rum-beacon/).
+To disable analytics, remove the variable and rebuild/redeploy.
 
 ## Coordinates and map coverage
 
