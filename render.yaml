@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: osrs-tile-studio
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: FEEDBACK_GITHUB_REPOSITORY
+        value: CampbellTrevor/osrs-tile-studio
+      - key: FEEDBACK_GITHUB_TOKEN
+        sync: false
